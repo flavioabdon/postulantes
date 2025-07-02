@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const { crearPostulante } = require('../controllers/postulanteController');
+const { verificarExistenciaPostulante } = require('../controllers/postulanteController');
 const router = express.Router();
 
 const storage = multer.diskStorage({
@@ -14,4 +15,5 @@ router.post('/', upload.fields([
   { name: 'archivo_no_militancia', maxCount: 1 }
 ]), crearPostulante);
 
+router.get('/existe', verificarExistenciaPostulante);
 module.exports = router;

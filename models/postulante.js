@@ -38,9 +38,22 @@ const crearPostulante = async (data) => {
     tipoPostulacion, idRecinto, nombreRecinto, municipioRecinto, viveCercaRecinto,
     archivos.ci, archivos.no_militancia
   ]);
-  
 
   return result.rows[0];
 };
 
-module.exports = { crearPostulante };
+  
+const existePostulante = async (cedula_identidad, complemento, expedicion) => {
+  const result = await pool.query(
+    `SELECT 1 FROM postulantes 
+     WHERE cedula_identidad = $1 AND complemento = $2 AND expedicion = $3 
+     LIMIT 1`,
+    [cedula_identidad, complemento, expedicion]
+  );
+  return result.rowCount > 0;
+};
+
+module.exports = {
+  crearPostulante,
+  existePostulante
+};

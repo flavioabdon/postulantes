@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Postulante</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- Custom CSS -->
+  <style>
+    .form-section {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .form-section h3 {
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    .requisitos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+    }
+    .toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1100;
+    }
+    #registroForm {
+      transition: all 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-10">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h2 class="mb-0"><i class="bi bi-person-plus"></i> Registro de Postulante</h2>
+          </div>
+          <div class="card-body">
+            <!-- Verificación -->
+            <div class="form-section">
+              <h3><i class="bi bi-search"></i> Verificar Postulante</h3>
+              <form id="verificarForm" class="row g-3">
+                <div class="col-md-6">
+                  <label for="cedula_identidad" class="form-label">Cédula de Identidad <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="cedula_identidad" name="cedula_identidad" required>
+                </div>
+                <div class="col-md-3">
+                  <label for="complemento" class="form-label">Complemento</label>
+                  <input type="text" class="form-control" id="complemento" name="complemento">
+                </div>
+                <div class="col-md-3">
+                  <label for="expedicion" class="form-label">Expedición <span class="text-danger">*</span></label>
+                  <select class="form-select" id="expedicion" name="expedicion" required>
+                    <option value="" selected disabled>Seleccione...</option>
+                    <option value="LP">LP - La Paz</option>
+                    <option value="CB">CB - Cochabamba</option>
+                    <option value="SC">SC - Santa Cruz</option>
+                    <option value="OR">OR - Oruro</option>
+                    <option value="PT">PT - Potosí</option>
+                    <option value="TJ">TJ - Tarija</option>
+                    <option value="CH">CH - Chuquisaca</option>
+                    <option value="BN">BN - Beni</option>
+                    <option value="PD">PD - Pando</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Verificar
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Mensajes -->
+            <div id="mensaje" class="d-none alert"></div>
+
+            <!-- Registro (oculto inicialmente) -->
+            <form id="registroForm" class="d-none" enctype="multipart/form-data">
+              <div class="form-section">
+                <h3><i class="bi bi-person-lines-fill"></i> Datos Personales</h3>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" required>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="apellidoPaterno" class="form-label">Apellido Paterno <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="apellidoPaterno" name="apellidoPaterno">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="apellidoMaterno" class="form-label">Apellido Materno</label>
+                    <input type="text" class="form-control" id="apellidoMaterno" name="apellidoMaterno">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="gradoInstruccion" class="form-label">Grado de Instrucción</label>
+                    <input type="text" class="form-control" id="gradoInstruccion" name="gradoInstruccion">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-house-door"></i> Dirección</h3>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="ciudad" class="form-label">Ciudad</label>
+                    <input type="text" class="form-control" id="ciudad" name="ciudad">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="zona" class="form-label">Zona</label>
+                    <input type="text" class="form-control" id="zona" name="zona">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="calleAvenida" class="form-label">Calle/Avenida</label>
+                    <input type="text" class="form-control" id="calleAvenida" name="calleAvenida">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="numeroDomicilio" class="form-label">Nro Domicilio</label>
+                    <input type="text" class="form-control" id="numeroDomicilio" name="numeroDomicilio">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-telephone"></i> Contacto</h3>
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="tel" class="form-control" id="telefono" name="telefono">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="celular" class="form-label">Celular <span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="celular" name="celular" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-geo-alt"></i> Ubicación</h3>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="latitud" class="form-label">Latitud</label>
+                    <input type="text" class="form-control" id="latitud" name="latitud">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="longitud" class="form-label">Longitud</label>
+                    <input type="text" class="form-control" id="longitud" name="longitud">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-phone"></i> Dispositivo Móvil</h3>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="marcaCelular" class="form-label">Marca del Celular</label>
+                    <input type="text" class="form-control" id="marcaCelular" name="marcaCelular">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="modeloCelular" class="form-label">Modelo del Celular</label>
+                    <input type="text" class="form-control" id="modeloCelular" name="modeloCelular">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-building"></i> Recinto Electoral</h3>
+                <div class="row g-3">
+                  <div class="row-g3">
+                    <p>En el mapa seleccione el recinto en el cual desea postular para operador SIREPRE excepto aquellos recintos RESTRINGIDO (Cárceles)</p>
+                    <a href="https://www.google.com/maps/d/edit?mid=1LKoP7ACvqE5ZcDLJ4pz7Hl3JNpTUrcs&usp=sharing" target="_blank">
+                      <p type="submit" class="btn btn-primary">
+                        <i class="bi"></i> Abrir Mapa de Recintos
+                      </p>
+                    </a>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="tipoPostulacion" class="form-label">Tipo de Postulación <span class="text-danger">*</span></label>
+                    <select class="form-select" id="tipoPostulacion" name="tipoPostulacion" required>
+                      <option value="" selected disabled>Seleccione...</option>
+                      <option value="OPERADOR DE TRANSMISION SIREPRE URBANO">OPERADOR DE TRANSMISIÓN SIREPRE URBANO</option>
+                      <option value="TÉCNICO ELECTORAL">TÉCNICO ELECTORAL</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="idRecinto" class="form-label">ID Recinto</label>
+                    <input type="text" class="form-control" id="idRecinto" name="idRecinto">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="nombreRecinto" class="form-label">Nombre del Recinto</label>
+                    <input type="text" class="form-control" id="nombreRecinto" name="nombreRecinto">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="municipioRecinto" class="form-label">Municipio del Recinto</label>
+                    <input type="text" class="form-control" id="municipioRecinto" name="municipioRecinto">
+                  </div>
+                  <div class="col-md-6">
+                    <label for="viveCercaRecinto" class="form-label">¿Vive cerca del recinto?</label>
+                    <select class="form-select" id="viveCercaRecinto" name="viveCercaRecinto">
+                      <option value="true">Sí</option>
+                      <option value="false">No</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-list-check"></i> Requisitos</h3>
+                <div class="requisitos-grid">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="esBoliviano" name="requisitos" value="esBoliviano">
+                    <label class="form-check-label" for="esBoliviano">Es boliviano</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="registradoPadronElectoral" name="requisitos" value="registradoPadronElectoral">
+                    <label class="form-check-label" for="registradoPadronElectoral">Registrado en padrón electoral</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="cedulaIdentidadVigente" name="requisitos" value="cedulaIdentidadVigente">
+                    <label class="form-check-label" for="cedulaIdentidadVigente">CI vigente</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="disponibilidadTiempoCompleto" name="requisitos" value="disponibilidadTiempoCompleto" >
+                    <label class="form-check-label" for="disponibilidadTiempoCompleto">Disponibilidad tiempo completo</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="celularConCamara" name="requisitos" value="celularConCamara" >
+                    <label class="form-check-label" for="celularConCamara">Celular con cámara</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="android8_2OSuperior" name="requisitos" value="android8_2OSuperior" >
+                    <label class="form-check-label" for="android8_2OSuperior">Android 8.2 o superior</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="lineaEntel" name="requisitos" value="lineaEntel" >
+                    <label class="form-check-label" for="lineaEntel">Línea Entel</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="ningunaMilitanciaPolitica" name="requisitos" value="ningunaMilitanciaPolitica" >
+                    <label class="form-check-label" for="ningunaMilitanciaPolitica">Ninguna militancia política</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="sinConflictosInstitucion" name="requisitos" value="sinConflictosInstitucion" >
+                    <label class="form-check-label" for="sinConflictosInstitucion">Sin conflictos con la institución</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="bi bi-file-earmark"></i> Documentación</h3>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label for="archivo_ci" class="form-label">Archivo CI (Subir solo PDF) <span class="text-danger">*</span></label>
+                    <input type="file" class="form-control" id="archivo_ci" name="archivo_ci" accept=".pdf" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="archivo_no_militancia" class="form-label">Archivo No Militancia (Subir solo PDF) <span class="text-danger">*</span></label>
+                    <input type="file" class="form-control" id="archivo_no_militancia" name="archivo_no_militancia" accept=".pdf" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                <button type="reset" class="btn btn-outline-secondary me-md-2">
+                  <i class="bi bi-eraser"></i> Limpiar
+                </button>
+                <button type="submit" class="btn btn-success">
+                  <i class="bi bi-save"></i> Registrar Postulante
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container"></div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="script.js"></script>
+</body>
+</html>
