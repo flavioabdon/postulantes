@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const url = `/api/postulantes/existe?cedula_identidad=${cedula_identidad}&complemento=${complemento}&expedicion=${expedicion}`;
+        const url = `/api/postulantes/existe?cedula_identidad=${cedula_identidad}&complemento=${complemento}`;
 
         try {
             // Mostrar spinner de carga

@@ -43,10 +43,10 @@ const crearPostulante = async (data) => {
 };
 
   
-const existePostulante = async (cedula_identidad, complemento, expedicion) => {
+const existePostulante = async (cedula_identidad, complemento) => {
   const result = await pool.query(
     `SELECT 1 FROM postulantes 
-     WHERE cedula_identidad = $1 AND complemento = $2 AND expedicion = $3 
+     WHERE cedula_identidad = $1 AND complemento = $2
      LIMIT 1`,
     [cedula_identidad, complemento, expedicion]
   );

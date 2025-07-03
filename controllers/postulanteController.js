@@ -24,7 +24,7 @@ const crearPostulanteHandler = async (req, res) => {
 
 const verificarExistenciaPostulante = async (req, res) => {
   try {
-    const { cedula_identidad, complemento, expedicion } = req.query;
+    const { cedula_identidad, complemento } = req.query;
 
     if (!cedula_identidad || !expedicion) {
       return res.status(400).json({ success: false, error: 'Faltan campos requeridos.' });
