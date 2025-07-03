@@ -48,7 +48,7 @@ const existePostulante = async (cedula_identidad, complemento) => {
     `SELECT 1 FROM postulantes 
      WHERE cedula_identidad = $1 AND complemento = $2
      LIMIT 1`,
-    [cedula_identidad, complemento, expedicion]
+    [cedula_identidad, complemento]
   );
   return result.rowCount > 0;
 };

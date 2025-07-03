@@ -26,11 +26,11 @@ const verificarExistenciaPostulante = async (req, res) => {
   try {
     const { cedula_identidad, complemento } = req.query;
 
-    if (!cedula_identidad || !expedicion) {
+    if (!cedula_identidad) {
       return res.status(400).json({ success: false, error: 'Faltan campos requeridos.' });
     }
 
-    const existe = await existePostulante(cedula_identidad, complemento || '', expedicion);
+    const existe = await existePostulante(cedula_identidad, complemento);
 
     if (existe) {
       return res.json({ success: true, existe: true, mensaje: 'El postulante ya está registrado.' });
