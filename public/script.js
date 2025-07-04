@@ -3,6 +3,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const registroForm = document.getElementById('registroForm');
     const mensaje = document.getElementById('mensaje');
     const toastContainer = document.querySelector('.toast-container');
+    
+    function showToast(message, type = 'info') {
+        const toastEl = document.createElement('div');
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toastEl);
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+
+        toastEl.addEventListener('hidden.bs.toast', () => {
+            toastEl.remove();
+        });
+    }
+
+   const archivoInputs = ['archivo_ci', 'archivo_no_militancia', 'curriculum', 'capturaPantalla'];
+
+    archivoInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('change', function (e) {
+                const file = this.files[0];
+
+                if (!file) return;
+
+                const isPDF = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+                const isUnder1MB = file.size <= 1024 * 1024;
+
+                if (!isPDF) {
+                    showToast('Solo se permiten archivos en formato PDF.', 'danger');
+                    this.value = '';
+                    return;
+                }
+
+                if (!isUnder1MB) {
+                    showToast('El archivo supera el tamaño máximo de 1MB.', 'warning');
+                    this.value = '';
+                    return;
+                }
+
+                showToast('Archivo válido cargado.', 'success');
+            });
+        }
+    });
+
+    
+    
     //validacion
     // Validación en tiempo real para CI (solo números)
     document.getElementById('cedula_identidad').addEventListener('input', function(e) {
@@ -131,6 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cedula.length < 7 || cedula.length > 9) {
             showToast('La cédula debe contener entre 7 y 9 dígitos', 'warning');
             cedulaInput.focus();
+            
+            // Recargar la página después de 3 segundos (3000 milisegundos)
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+            
             return;
         }
         
@@ -208,8 +272,8 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.innerHTML = originalBtnText;
             submitBtn.disabled = false;
 
-            if (result.success && result.existe) {
-                showToast('⚠️ El postulante ya está registrado.', 'warning');
+            if (result.success && result.existe || (cedula_identidad.length < 7 || cedula_identidad.length > 9)) {
+                showToast('⚠️ El postulante ya está registrado o no cumple criterio.', 'warning');
                 registroForm.classList.add('d-none');
                 submitBtn.disabled = true;
                 
@@ -245,106 +309,126 @@ document.addEventListener('DOMContentLoaded', () => {
     // Envío del formulario de registro
     registroForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        //
-        const fechaNacimiento = new Date(document.getElementById('fechaNacimiento').value);
-        const fechaMinima = new Date('2005-08-17');
         
-        if (fechaNacimiento > fechaMinima) {
-            e.preventDefault();
-            showToast('Debe ser mayor de edad (nacido antes del 17/08/2005)', 'warning');
-            return;
-        }
-
-        // Validar rango de celular (60000000-79999999)
-        const celular = document.getElementById('celular').value;
-        if (celular < 60000000 || celular > 79999999) {
-            e.preventDefault();
-            showToast('El celular debe estar entre 60000000 y 79999999', 'warning');
-            return;
-        }
         // Mostrar spinner de carga
         const submitBtn = registroForm.querySelector('button[type="submit"]');
         const originalBtnText = submitBtn.innerHTML;
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Registrando...';
         submitBtn.disabled = true;
-
-        const formData = new FormData(registroForm);
-
-        // Recuperar datos guardados
-        const cedulaIdentidad = localStorage.getItem('cedula_identidad');
-        const complemento = localStorage.getItem('complemento') || '';
-        const expedicion = localStorage.getItem('expedicion');
-
-        formData.append('cedulaIdentidad', cedulaIdentidad);
-        formData.append('complemento', complemento);
-        formData.append('expedicion', expedicion);
-
-        // Construir objeto requisitos
-        const requisitos = {
-            esBoliviano: false,
-            registradoPadronElectoral: false,
-            cedulaIdentidadVigente: false,
-            disponibilidadTiempoCompleto: false,
-            celularConCamara: false,
-            android8_2OSuperior: false,
-            lineaEntel: false,
-            ningunaMilitanciaPolitica: false,
-            sinConflictosInstitucion: false
-        };
-
-        document.querySelectorAll('input[name="requisitos"]:checked').forEach(chk => {
-            requisitos[chk.value] = true;
-        });
-
-        formData.append('requisitos', JSON.stringify(requisitos));
-
+    
         try {
-            const res = await fetch('/api/postulantes', {
+            // Calcular experiencia_general
+            const experienciaEspecifica = document.getElementById('experienciaEspecifica').value;
+            const nroDeProcesosSelect = document.getElementById('nroDeProcesos');
+            let experiencia_general = 0;
+    
+            if (experienciaEspecifica === 'SI') {
+                experiencia_general = nroDeProcesosSelect.value === '10' ? 10 : parseInt(nroDeProcesosSelect.value) || 0;
+            }
+    
+            // Crear FormData
+            const formData = new FormData(registroForm);
+            formData.append('experiencia_general', experiencia_general.toString());
+            
+            // Agregar datos de verificación
+            formData.append('cedulaIdentidad', localStorage.getItem('cedula_identidad'));
+            formData.append('complemento', localStorage.getItem('complemento') || '');
+            formData.append('expedicion', localStorage.getItem('expedicion'));
+    
+            // Procesar TODOS los requisitos
+            const requisitos = {
+                esBoliviano: document.getElementById('esBoliviano').checked,
+                registradoPadronElectoral: document.getElementById('registradoPadronElectoral').checked,
+                cedulaIdentidadVigente: document.getElementById('cedulaIdentidadVigente').checked,
+                disponibilidadTiempoCompleto: document.getElementById('disponibilidadTiempoCompleto').checked,
+                celularConCamara: document.getElementById('celularConCamara').checked,
+                android8_2OSuperior: document.getElementById('android8_2OSuperior').checked,
+                lineaEntel: document.getElementById('lineaEntel').checked,
+                ningunaMilitanciaPolitica: document.getElementById('ningunaMilitanciaPolitica').checked,
+                sinConflictosInstitucion: document.getElementById('sinConflictosInstitucion').checked
+            };
+            formData.append('requisitos', JSON.stringify(requisitos));
+    
+            // Enviar datos al servidor
+            const response = await fetch('/api/postulantes', {
                 method: 'POST',
                 body: formData
             });
-
-            const result = await res.json();
-
+    
+            const result = await response.json();
+    
             // Restaurar botón
             submitBtn.innerHTML = originalBtnText;
             submitBtn.disabled = false;
-
-            // Dentro del registroForm.addEventListener('submit')
+    
             if (result.success) {
-                showToast('✅ Postulante registrado correctamente.', 'success');
+                showToast(result.message || '✅ Registro exitoso', 'success');
                 
-                // Descargar automáticamente el PDF
+                // Descargar PDF automáticamente
                 if (result.pdfUrl) {
-                const downloadLink = document.createElement('a');
-                downloadLink.href = result.pdfUrl;
-                downloadLink.download = result.pdfFilename || 'comprobante_postulacion.pdf';
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                
-                // Mostrar enlace adicional por si falla la descarga automática
-                showToast(`📄 <a href="${result.pdfUrl}" download class="text-white">Descargar comprobante</a>`, 'success');
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = result.pdfUrl;
+                    downloadLink.download = result.pdfFilename;
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
                 }
-            
-                registroForm.reset();
-                registroForm.classList.add('d-none');
-                verificarForm.reset();
-                localStorage.clear();
-                
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+                // Resetear formulario después de 3 segundos
+                setTimeout(() => {
+                    registroForm.reset();
+                    registroForm.classList.add('d-none');
+                    window.location.reload();
+                }, 3000);
             } else {
-                showToast(`❌ Error al registrar: ${result.error}`, 'danger');
+                showToast(result.message || '❌ Error al registrar', 'danger');
             }
-        } catch (err) {
-            console.error(err);
-            showToast('❌ Error de red al registrar.', 'danger');
-            
-            // Restaurar botón en caso de error
+    
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('❌ Error de conexión con el servidor', 'danger');
             submitBtn.innerHTML = originalBtnText;
             submitBtn.disabled = false;
         }
     });
+    
+    // Función mejorada para mostrar toasts
+    function showToast(message, type = 'info') {
+        const toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) {
+            console.error('No se encontró el contenedor de toasts');
+            return;
+        }
+    
+        const toastEl = document.createElement('div');
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+        
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        
+        toastContainer.appendChild(toastEl);
+        
+        // Inicializar toast de Bootstrap
+        const toast = new bootstrap.Toast(toastEl, {
+            autohide: true,
+            delay: 5000
+        });
+        toast.show();
+        
+        // Eliminar después de ocultarse
+        toastEl.addEventListener('hidden.bs.toast', () => {
+            toastEl.remove();
+        });
+    }
 
     // Validación en tiempo real para CI (solo números)
     document.getElementById('cedula_identidad').addEventListener('input', function(e) {
@@ -361,11 +445,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
         select.addEventListener('change', () => {
             if (select.value === 'BACHILLER') {
-                    input.disabled = true; // Habilitar el campo
+              input.value = '';
+              input.disabled = true;
             } else {
-                    input.disabled = false; // Deshabilitar el campo
+              input.disabled = false;
             }
-        });
+          });
     
         //deshabilitar el campo de CI
         document.getElementById("btn_verificar").addEventListener("click", function () {

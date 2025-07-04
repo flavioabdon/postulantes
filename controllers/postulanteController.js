@@ -130,7 +130,7 @@ async function generarPDF(data) {
     fs.unlinkSync(qrPath);
   }
 
-  drawText(`Fecha de registro: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, width - 500, yPosition, {
+  drawText(`Fecha de registro: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, width - 450, yPosition, {
     size: 8,
     color: rgb(0.3, 0.3, 0.3)
   });
@@ -185,7 +185,7 @@ async function generarPDF(data) {
 
   // Pie de página
   yPosition -= 20;
-  drawText('Este documento es generado automáticamente y no requiere firma.', margin, yPosition, {
+  drawText('', margin, yPosition, {
     size: 8,
     color: rgb(0.3, 0.3, 0.3)
   });
@@ -209,33 +209,80 @@ async function generarPDF(data) {
 
 const crearPostulanteHandler = async (req, res) => {
   try {
-    const data = req.body;
-    const archivos = {
-      ci: req.files['archivo_ci']?.[0]?.path || null,
-      no_militancia: req.files['archivo_no_militancia']?.[0]?.path || null,
-      hoja_vida: req.files['curriculum']?.[0]?.path || null,       // Nuevo
-      screenshot: req.files['capturaPantalla']?.[0]?.path || null  // Nuevo
+    const data = {
+      ...req.body,
+      archivos: {
+        ci: req.files['archivo_ci']?.[0]?.path,
+        no_militancia: req.files['archivo_no_militancia']?.[0]?.path,
+        hoja_vida: req.files['curriculum']?.[0]?.path,
+        screenshot: req.files['capturaPantalla']?.[0]?.path
+      }
     };
-    data.archivos = archivos;
-    data.requisitos = JSON.stringify(data.requisitos);
-    data.viveCercaRecinto = data.viveCercaRecinto === 'true';
+    console.log(data);
+    // Procesamiento CORREGIDO de requisitos
+    let requisitos = {};
+    if (Array.isArray(data.requisitos)) {
+      // Caso 1: Cuando viene como array de strings
+      data.requisitos.forEach(item => {
+        if (typeof item === 'string' && item !== '') {
+          try {
+            // Intentar parsear si es string JSON
+            const parsed = JSON.parse(item);
+            requisitos = {...requisitos, ...parsed};
+          } catch {
+            // Si no es JSON, es un nombre de campo
+            requisitos[item] = true;
+          }
+        }
+      });
+    } else if (typeof data.requisitos === 'string') {
+      // Caso 2: Cuando viene como string JSON
+      try {
+        requisitos = JSON.parse(data.requisitos);
+      } catch (e) {
+        console.error('Error parsing requisitos:', e);
+      }
+    } else {
+      // Caso 3: Cuando viene como objeto
+      requisitos = data.requisitos || {};
+    }
+    // Procesar todos los requisitos booleanos
+    data.es_boliviano = !!requisitos.esBoliviano;
+    data.registrado_en_padron_electoral = !!requisitos.registradoPadronElectoral;
+    data.ci_vigente = !!requisitos.cedulaIdentidadVigente;
+    data.disponibilidad_tiempo_completo = !!requisitos.disponibilidadTiempoCompleto;
+    data.celular_con_camara = !!requisitos.celularConCamara;
+    data.android_8_2_o_superior = !!requisitos.android8_2OSuperior;
+    data.linea_entel = !!requisitos.lineaEntel;
+    data.ninguna_militancia_politica = !!requisitos.ningunaMilitanciaPolitica;
+    data.sin_conflictos_con_la_institucion = !!requisitos.sinConflictosInstitucion;
 
-    console.log (data)
+    // Procesar experiencia
+    data.experiencia_general = parseInt(req.body.experiencia_general) || 0;
 
-    const nuevo = await crearPostulante(data);
+    // Procesar carrera
+    data.carrera = req.body.carrera || 'NO APLICA';
+
+    const nuevoPostulante = await crearPostulante(data);
     const pdfPath = await generarPDF(data);
-    const pdfFilename = `comprobante_${data.cedulaIdentidad}.pdf`;
+    const pdfFilename = path.basename(pdfPath);
 
-    res.status(201).json({ 
-      success: true, 
-      id: nuevo.id,
+    res.status(201).json({
+      success: true,
+      message: 'Postulante registrado exitosamente',
+      id: nuevoPostulante.id,
       pdfUrl: `/comprobantes/${pdfFilename}`,
       pdfFilename: pdfFilename,
       nombreCompleto: `${data.nombre} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}`
     });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, error: error.message });
+    console.error('Error en crearPostulanteHandler:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al registrar postulante',
+      error: error.message 
+    });
   }
 };
 
