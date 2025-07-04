@@ -205,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // Resto de tu lógica de verificación...
         try {
             const submitBtn = document.getElementById('btn_verificar');
             const originalBtnText = submitBtn.innerHTML;
@@ -218,9 +217,21 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (result.success && result.existe) {
                 showToast('⚠️ El postulante ya está registrado.', 'warning');
-                // Resto de tu lógica...
+                registroForm.classList.add('d-none');
             } else {
-                // Continuar con el proceso...
+                //showToast('📝 Complete el formulario de registro.', 'info');
+                registroForm.classList.remove('d-none');
+                mensaje.classList.add('d-none');
+
+                // Hacer scroll suave al formulario de registro
+                registroForm.scrollIntoView({ behavior: 'smooth' });
+
+                // Guardar en localStorage para usarlos en el submit final
+                localStorage.setItem('cedula_identidad', cedula_identidad);
+                localStorage.setItem('complemento', complemento);
+                localStorage.setItem('expedicion', expedicion);
+
+
             }
         } catch (error) {
             console.error('Error:', error);
@@ -286,6 +297,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('📝 Complete el formulario de registro.', 'info');
                 registroForm.classList.remove('d-none');
                 mensaje.classList.add('d-none');
+                submitBtn.innerHTML = '<span class="bi bi-check-circle" role="status" aria-hidden="true"></span> Verificado';
+                submitBtn.class=
                 submitBtn.disabled = true;
                 // Hacer scroll suave al formulario de registro
                 registroForm.scrollIntoView({ behavior: 'smooth' });
