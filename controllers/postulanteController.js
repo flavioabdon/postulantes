@@ -50,9 +50,9 @@ async function generarPDF(data) {
   // Configuraciones
   const margin = 50;
   const { width, height } = page.getSize();
-  let yPosition = height - margin;
+  let yPosition = height - margin - 50; // Ajuste inicial para bajar el contenido
   const lineHeight = 18;
-  const sectionGap = 25;
+  const sectionGap = 20; // Reducido de 25 a 20
   const boxPadding = 10;
   const boxMargin = 15;
   const boxBorderWidth = 1;
@@ -84,12 +84,12 @@ async function generarPDF(data) {
       height: sectionHeight,
       borderWidth: boxBorderWidth,
       borderColor: rgb(0.7, 0.7, 0.7),
-      color: rgb(0.95, 0.95, 0.95) // Fondo gris muy claro
+      color: rgb(0.95, 0.95, 0.95)
     });
 
-    // Título de sección (dentro del recuadro)
+    // Título de sección (tamaño reducido de 14 a 11)
     drawText(title, margin, yPosition, {
-      size: 14,
+      size: 11, // Reducido de 14 a 11 (14-3)
       bold: true,
       color: rgb(0, 0.4, 0.6)
     });
@@ -109,33 +109,34 @@ async function generarPDF(data) {
   };
 
   // Encabezado (fuera de recuadro)
-  drawText('FORMULARIO DE POSTULACIÓN SIREPRE', width/2 - 100, yPosition, {
-    size: 16,
+  drawText('POSTULACIÓN SIREPRE', width/2 - 100, yPosition, {
+    size: 13, // Reducido de 16 a 13
     bold: true,
     color: rgb(0, 0.2, 0.4)
   });
   yPosition -= lineHeight * 1.5;
-  drawText(`Fecha de registro: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, width - 300, yPosition, {
-    size: 8,
-    color: rgb(0.3, 0.3, 0.3)
-  });
-  yPosition -= lineHeight * 2;
-
-  // Generar y agregar QR
+  
+  // Generar y agregar QR (posición ajustada)
   const qrPath = await generarQR(data);
   if (qrPath) {
     const qrImage = await pdfDoc.embedPng(fs.readFileSync(qrPath));
-    const qrSize = 20;
+    const qrSize = 80;
     page.drawImage(qrImage, {
-      x: width - margin - qrSize-10,
-      y: yPosition - qrSize + 20,
+      x: width - margin - qrSize - 10,
+      y: height - margin - qrSize - 30, // Posición fija en esquina superior derecha
       width: qrSize,
       height: qrSize
     });
     fs.unlinkSync(qrPath);
   }
 
-  // Sección 1: Datos Personales
+  drawText(`Fecha de registro: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, width - 500, yPosition, {
+    size: 8,
+    color: rgb(0.3, 0.3, 0.3)
+  });
+  yPosition -= lineHeight * 3; // Más espacio después del encabezado
+
+  // Sección 1: Datos Personales (ahora empieza más abajo)
   drawSection('DATOS PERSONALES', [
     { text: `Nombre completo: ${data.nombre} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}` },
     { text: `Cédula de Identidad: ${data.cedulaIdentidad} ${data.complemento || ''} ${data.expedicion || ''}` },
@@ -144,14 +145,13 @@ async function generarPDF(data) {
     { spacer: 5 }
   ]);
 
-  // Sección 2: Contacto
+  // Resto de las secciones (sin cambios en el contenido)
   drawSection('INFORMACIÓN DE CONTACTO', [
     { text: `Email: ${data.email || 'No especificado'}` },
     { text: `Celular: ${data.celular || 'No especificado'}` },
     { spacer: 5 }
   ]);
 
-  // Sección 3: Dirección
   drawSection('DIRECCIÓN', [
     { text: `Ciudad: ${data.ciudad || 'No especificado'}` },
     { text: `Zona: ${data.zona || 'No especificado'}` },
@@ -160,14 +160,12 @@ async function generarPDF(data) {
     { spacer: 5 }
   ]);
 
-  // Sección 4: Dispositivo Móvil
   drawSection('DISPOSITIVO MÓVIL', [
     { text: `Marca: ${data.marcaCelular || 'No especificado'}` },
     { text: `Modelo: ${data.modeloCelular || 'No especificado'}` },
     { spacer: 5 }
   ]);
 
-  // Sección 5: Recinto Electoral
   drawSection('RECINTO ELECTORAL', [
     { text: `Tipo de Postulación: ${data.tipoPostulacion || 'No especificado'}` },
     { text: `ID Recinto: ${data.idRecinto || 'No especificado'}` },
@@ -177,40 +175,15 @@ async function generarPDF(data) {
     { spacer: 5 }
   ]);
 
-  // Sección 6: Requisitos
-//  const requisitos = JSON.parse(data.requisitos);
-//  const requisitosText = Object.entries(requisitos).map(([key, value]) => {
-//    const labelMap = {
- //     esBoliviano: 'Es boliviano',
- //     registradoPadronElectoral: 'Registrado en padrón electoral',
- //     cedulaIdentidadVigente: 'CI vigente',
- //     disponibilidadTiempoCompleto: 'Disponibilidad tiempo completo',
- //     celularConCamara: 'Celular con cámara',
- //     android8_2OSuperior: 'Android 8.2 o superior',
-  //    lineaEntel: 'Línea Entel',
-  //    ningunaMilitanciaPolitica: 'Ninguna militancia política',
-   //   sinConflictosInstitucion: 'Sin conflictos con la institución'
-  //  };
-  //  
-  //  return `${labelMap[key] || key}: ${value ? 'Cumple' : 'No cumple'}`;
-  //});
-
-  //drawSection('REQUISITOS', [
-  //  ...requisitosText.map(text => ({ text })),
-  //  { spacer: 5 }
-  //]);
-  console.log(data.archivos);
-  // Sección 7: Documentación
   drawSection('DOCUMENTACIÓN ADJUNTADA', [
-    
     { text: `Archivo CI: ${data.archivos.ci ? 'Presentado' : 'No presentado'}` },
     { text: `Archivo No Militancia: ${data.archivos.no_militancia ? 'Presentado' : 'No presentado'}` },
     { text: `Hoja de Vida: ${data.archivos.hoja_vida ? 'Presentado' : 'No presentado'}` },
     { text: `Captura de Pantalla: ${data.archivos.screenshot ? 'Presentado' : 'No presentado'}` },
     { spacer: 5 }
-]);
+  ]);
 
-  // Pie de página (fuera de recuadro)
+  // Pie de página
   yPosition -= 20;
   drawText('Este documento es generado automáticamente y no requiere firma.', margin, yPosition, {
     size: 8,

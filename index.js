@@ -36,6 +36,35 @@ app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
 });
 
+
+
+//
+
+// Configura tus rutas normales
+app.use('/api/auth', authRoutes);
+app.use('/api/postulantes', postulanteRoutes);
+app.use('/admin', adminRoutes);
+
+// Rutas específicas que no deben redirigir
+//DESCOMENTAR PARA AÑADIR A LA LISTA DE RESTRGUIDOS
+const excludedRoutes = [
+  //'/postulantes',
+  //'/postulantes/excel',
+  //'/estadisticas',
+  //'/login',
+  //'/registro',
+  //'/perfil',
+  '/formulario'  // Para evitar redirección infinita
+];
+//
+app.get('*', (req, res, next) => {
+  if (excludedRoutes.includes(req.path)) {
+    return next(); // Pasar a la siguiente ruta
+  }
+  res.redirect('/formulario');
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);

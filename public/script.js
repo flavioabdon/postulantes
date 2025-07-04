@@ -121,7 +121,48 @@ document.addEventListener('DOMContentLoaded', () => {
             toastEl.remove();
         });
     }
-
+    document.getElementById('verificarForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const cedulaInput = document.getElementById('cedula_identidad');
+        const cedula = cedulaInput.value.trim();
+        
+        // Validación de longitud (7 a 9 dígitos)
+        if (cedula.length < 7 || cedula.length > 9) {
+            showToast('La cédula debe contener entre 7 y 9 dígitos', 'warning');
+            cedulaInput.focus();
+            return;
+        }
+        
+        // Validación de solo números
+        if (!/^\d+$/.test(cedula)) {
+            showToast('La cédula solo debe contener números', 'warning');
+            cedulaInput.focus();
+            return;
+        }
+        
+        // Resto de tu lógica de verificación...
+        try {
+            const submitBtn = document.getElementById('btn_verificar');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Verificando...';
+            
+            const response = await fetch(`/api/postulantes/existe?cedula_identidad=${cedula}`);
+            const result = await response.json();
+            
+            submitBtn.innerHTML = originalBtnText;
+            
+            if (result.success && result.existe) {
+                showToast('⚠️ El postulante ya está registrado.', 'warning');
+                // Resto de tu lógica...
+            } else {
+                // Continuar con el proceso...
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Error al verificar', 'danger');
+        }
+    });
     verificarForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -131,23 +172,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!cedula_identidad || !expedicion) {
             showToast('⚠️ Debe completar los campos requeridos.', 'warning');
-            document.getElementById("btn_verificar").addEventListener("click", function () {
-                const seccion = document.getElementById("seccion-verificacion");
-                const inputs = seccion.querySelectorAll("input, select");
-                const boton = document.getElementById("btn_verificar")
-                
-          
-                // Deshabilitar todos los inputs dentro de la sección
-                inputs.forEach(input => {
-                  input.disabled=false;
-                  //input.style.pointerEvents = "none"; // Deshabilita el input pero mantiene su valor
-                  //input.style.opacity = "0.5"
-                  boton.style.pointerEvents = "none"; // Deshabilita clics adicionales
-                  boton.style.opacity = "0.5"; // Cambia apariencia
-                  
-                  
-                });
+            
+            // Deshabilitar inputs y botón
+            const seccion = document.getElementById("seccion-verificacion");
+            const inputs = seccion.querySelectorAll("input, select");
+            const boton = document.getElementById("btn_verificar");
+            
+            inputs.forEach(input => {
+                input.disabled = true;
             });
+            boton.disabled = true;
+            boton.style.opacity = "0.5";
+            
+            // Recargar la página después de 3 segundos (3000 milisegundos)
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
+            
             return;
         }
 
@@ -171,6 +212,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('⚠️ El postulante ya está registrado.', 'warning');
                 registroForm.classList.add('d-none');
                 submitBtn.disabled = true;
+                
+                // Recargar la página después de 3 segundos (3000ms)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+                return;
             } else {
                 showToast('📝 Complete el formulario de registro.', 'info');
                 registroForm.classList.remove('d-none');
