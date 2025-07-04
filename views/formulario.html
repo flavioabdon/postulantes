@@ -230,6 +230,9 @@
                       </p>
                     </a>
                   </div>
+                  <div class="row">
+                    <img src="img/recinto.jpg" alt="auto">
+                  </div>
                   <div class="col-md-6">
                     <label for="tipoPostulacion" class="form-label">Tipo de Postulación <span class="text-danger">*</span></label>
                     <select class="form-select" id="tipoPostulacion" name="tipoPostulacion" required>
@@ -321,25 +324,65 @@
 
               <div class="form-section">
                 <h3><i class="bi bi-file-earmark"></i> Documentación</h3>
-                <div class="row g-3">
-                  <div class="col-md-6">
-                    <label for="archivo_ci" class="form-label">Archivo CI (Subir solo PDF) <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" id="archivo_ci" name="archivo_ci" accept=".pdf" required>
+                <div class="row">
+                  <!-- Archivo CI -->
+                  <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                      <img src="img/ci.jpg" class="card-img-top" alt="Documento CI">
+                      <div class="card-body">
+                        <label for="archivo_ci" class="form-label">
+                          Archivo CI <span class="text-danger">*</span>
+                          <small class="d-block text-muted">Cédula de identidad Anverso y Reverso (Solo PDF Max: 1MB)</small>
+                        </label>
+                        <input type="file" class="form-control" id="archivo_ci" name="archivo_ci" accept=".pdf" required>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <label for="archivo_no_militancia" class="form-label">Archivo No Militancia (Subir solo PDF) <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" id="archivo_no_militancia" name="archivo_no_militancia" accept=".pdf" required>
+                  
+                  <!-- Archivo No Militancia -->
+                  <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                      <img src="img/nomil.jpg" class="card-img-top" alt="Documento No Militancia">
+                      <div class="card-body">
+                        <label for="archivo_no_militancia" class="form-label">
+                          No Militancia <span class="text-danger">*</span>
+                          <small class="d-block text-muted">Captura de pantalla No Tener Militancia Política, Verificar <a href="https://yoparticipo.oep.org.bo/auth/signin">yo participo</a> (Solo PDF Max: 1MB)</small>
+                        </label>
+                        <input type="file" class="form-control" id="archivo_no_militancia" name="archivo_no_militancia" accept=".pdf" required>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <label for="curriculum" class="form-label">Hoja de vida (Subir solo PDF) <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" id="curriculum" name="curriculum" accept=".pdf" required>
+                  
+                  <!-- Hoja de Vida -->
+                  <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                      <img src="img/cv.jpg" class="card-img-top" alt="Hoja de Vida">
+                      <div class="card-body">
+                        <label for="curriculum" class="form-label">
+                          Hoja de Vida <span class="text-danger">*</span>
+                          <small class="d-block text-muted">Hoja De Vida No Documentada (Solo PDF Max: 1MB)</small>
+                        </label>
+                        <input type="file" class="form-control" id="curriculum" name="curriculum" accept=".pdf" required>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-md-6">
-                    <label for="capturaPantalla" class="form-label">Captura de pantalla de las caracteristicas de celular (Subir solo PDF) <span class="text-danger">*</span></label>
-                    <input type="file" class="form-control" id="capturaPantalla" name="capturaPantalla" accept=".pdf" required>
+                  
+                  <!-- Captura de Pantalla -->
+                  <div class="col-md-3 mb-3">
+                    <div class="card h-100">
+                      <img src="img/android.webp" class="card-img-top" alt="Captura de Pantalla">
+                      <div class="card-body">
+                        <label for="capturaPantalla" class="form-label">
+                          Captura Celular <span class="text-danger">*</span>
+                          <small class="d-block text-muted">Captura de Pantalla Caracterìsticas del Equipo Celular(Solo PDF Max: 1MB)</small>
+                        </label>
+                        <input type="file" class="form-control" id="capturaPantalla" name="capturaPantalla" accept=".pdf" required>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+              
 
 
               <div class="form-section">
