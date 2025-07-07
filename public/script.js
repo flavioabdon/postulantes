@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-   const archivoInputs = ['archivo_ci', 'archivo_no_militancia', 'curriculum', 'capturaPantalla'];
+   const archivoInputs = ['archivo_ci', 'curriculum'];
 
     archivoInputs.forEach(id => {
         const input = document.getElementById(id);
@@ -59,6 +59,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const archivoInputsImg = ['archivo_no_militancia', 'capturaPantalla']; 
+
+    archivoInputsImg.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+            input.addEventListener('change', function (e) {
+                const file = this.files[0];
+
+                if (!file) return;
+
+                const isIMG = /\.(jpg|jpeg|png)$/i.test(file.name);
+                const isUnder1MB = file.size <= 1024 * 1024;
+
+                if (!isIMG) {
+                    showToast('Solo se permiten archivos en formato jpg, jpeg, png.', 'danger');
+                    this.value = '';
+                    return;
+                }
+
+                if (!isUnder1MB) {
+                    showToast('El archivo supera el tamaño máximo de 1MB.', 'warning');
+                    this.value = '';
+                    return;
+                }
+
+                showToast('Archivo válido cargado.', 'success');
+            });
+        }
+    });
     
     
     //validacion
