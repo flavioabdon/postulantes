@@ -343,10 +343,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(registroForm);
             formData.append('experiencia_general', experiencia_general.toString());
             
-            // Agregar datos de verificación
-            formData.append('cedulaIdentidad', localStorage.getItem('cedula_identidad'));
-            formData.append('complemento', localStorage.getItem('complemento') || '');
-            formData.append('expedicion', localStorage.getItem('expedicion'));
+            const cedulaIdentidad = document.getElementById('cedula_identidad').value;
+            const complemento = document.getElementById('complemento').value;
+            const expedicion = document.getElementById('expedicion').value;
+        
+            // Agregar los valores correctos al FormData
+            formData.append('cedulaIdentidad', cedulaIdentidad);
+            formData.append('complemento', complemento);
+            formData.append('expedicion', expedicion);
+        
     
             // Procesar TODOS los requisitos
             const requisitos = {
