@@ -161,20 +161,18 @@
                   <div class="col-md-4">
                     <label for="zona" class="form-label">Zona <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="zona" name="zona" required
-                           pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+" title="Solo se permiten letras"
-                           oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '')">
+                           pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]+" title="Solo se permiten letras, números y espacios">
                   </div>
                   <div class="col-md-4">
                     <label for="calleAvenida" class="form-label">Calle/Avenida <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="calleAvenida" name="calleAvenida" required
-                           pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+" title="Solo se permiten letras"
-                           oninput="this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '')">
+                           pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]+" title="Solo se permiten letras, números y espacios">
                   </div>
                   <div class="col-md-6">
                     <label for="numeroDomicilio" class="form-label">Nro Domicilio <span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="numeroDomicilio" name="numeroDomicilio" required
-                           maxlength="5" pattern="[0-9]+" title="Solo números (máximo 5 dígitos)"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '').substring(0, 5)">
+                           maxlength="5" pattern="[0-9A-Za-z]+" title="Solo números (máximo 5 dígitos)"
+                           oninput="this.value = this.value.replace(/[^0-9A-Za-z]/g, '').substring(0, 5)">
                   </div>
                 </div>
               </div>

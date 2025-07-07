@@ -123,17 +123,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Validación en tiempo real para zona (solo letras)
     document.getElementById('zona').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '');
+        this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '');
     });
 
     // Validación en tiempo real para calle/avenida (solo letras)
     document.getElementById('calleAvenida').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '');
+        this.value = this.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '');
     });
 
     // Validación en tiempo real para nro domicilio (solo números, max 5)
     document.getElementById('numeroDomicilio').addEventListener('input', function(e) {
-        this.value = this.value.replace(/[^0-9]/g, '').substring(0, 5);
+        this.value = this.value.replace(/[^A-Za-z0-9\s]/g, '').substring(0, 5);
     });
 
     // Validación en tiempo real para celular (solo números 6 o 7 al inicio)
