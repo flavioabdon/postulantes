@@ -1,6 +1,13 @@
 const pool = require('../config/db');
 
 const crearPostulante = async (data) => {
+  // Primero verificamos si el postulante ya existe
+  const yaExiste = await existePostulante(data.cedulaIdentidad, data.complemento || null);
+  
+  if (yaExiste) {
+    throw new Error('Ya existe un postulante con esta cédula de identidad y complemento');
+  }
+
   const query = `
     INSERT INTO postulantes (
       nombre,
@@ -51,46 +58,46 @@ const crearPostulante = async (data) => {
     RETURNING id
   `;
   
-  const values = [                  // $1
-    data.nombre,                                // $2
-    data.apellidoPaterno || null,               // $3
-    data.apellidoMaterno || null,               // $4
-    data.fechaNacimiento,                       // $5
-    data.cedulaIdentidad,                       // $6
-    data.complemento || null,                   // $7
-    data.expedicion,                            // $8
-    data.gradoInstruccion,                      // $9
-    data.carrera || 'NO APLICA',                // $10
-    data.ciudad,                                // $11
-    data.zona,                                  // $12
-    data.calleAvenida,                          // $13
-    data.numeroDomicilio,                       // $14
-    data.email,                                 // $15
-    data.telefono || null,                      // $16
-    data.celular,                               // $17
-    data.latitud || null,                       // $18
-    data.longitud || null,                      // $19
-    data.marcaCelular || null,                  // $20
-    data.modeloCelular || null,                 // $21
-    data.tipoPostulacion,                       // $22
-    data.idRecinto,                             // $23
-    data.nombreRecinto,                         // $24
-    data.municipioRecinto,                      // $25
-    data.viveCercaRecinto,                      // $26
-    data.experiencia_general || 0,              // $27
-    data.es_boliviano || false,                 // $28
-    data.registrado_en_padron_electoral || false, // $29
-    data.ci_vigente || false,                   // $30
-    data.disponibilidad_tiempo_completo || false, // $31
-    data.celular_con_camara || false,           // $32
-    data.android_8_2_o_superior || false,       // $33
-    data.linea_entel || false,                  // $34
-    data.ninguna_militancia_politica || false,  // $35
-    data.sin_conflictos_con_la_institucion || false, // $36
-    data.archivos.ci,                           // $37
-    data.archivos.no_militancia,                // $38
-    data.archivos.hoja_vida,                    // $39
-    data.archivos.screenshot                    // $40
+  const values = [                  
+    data.nombre,                                
+    data.apellidoPaterno || null,               
+    data.apellidoMaterno || null,               
+    data.fechaNacimiento,                       
+    data.cedulaIdentidad,                       
+    data.complemento || null,                   
+    data.expedicion,                            
+    data.gradoInstruccion,                      
+    data.carrera || 'NO APLICA',                
+    data.ciudad,                                
+    data.zona,                                  
+    data.calleAvenida,                          
+    data.numeroDomicilio,                       
+    data.email,                                 
+    data.telefono || null,                      
+    data.celular,                               
+    data.latitud || null,                       
+    data.longitud || null,                      
+    data.marcaCelular || null,                  
+    data.modeloCelular || null,                 
+    data.tipoPostulacion,                       
+    data.idRecinto,                             
+    data.nombreRecinto,                         
+    data.municipioRecinto,                      
+    data.viveCercaRecinto,                      
+    data.experiencia_general || 0,              
+    data.es_boliviano || false,                 
+    data.registrado_en_padron_electoral || false,
+    data.ci_vigente || false,                   
+    data.disponibilidad_tiempo_completo || false,
+    data.celular_con_camara || false,           
+    data.android_8_2_o_superior || false,       
+    data.linea_entel || false,                  
+    data.ninguna_militancia_politica || false,  
+    data.sin_conflictos_con_la_institucion || false,
+    data.archivos.ci,                           
+    data.archivos.no_militancia,                
+    data.archivos.hoja_vida,                    
+    data.archivos.screenshot                    
   ];
 
   try {
@@ -102,11 +109,10 @@ const crearPostulante = async (data) => {
   }
 };
 
-  
 const existePostulante = async (cedula_identidad, complemento) => {
   const result = await pool.query(
     `SELECT 1 FROM postulantes 
-     WHERE cedula_identidad = $1 AND complemento = $2
+     WHERE cedula_identidad = $1 AND (complemento = $2 OR complemento IS NULL)
      LIMIT 1`,
     [cedula_identidad, complemento]
   );
