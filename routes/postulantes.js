@@ -17,11 +17,11 @@ const upload = multer({ storage });
 router.post('/', upload.fields([
   { name: 'archivo_ci', maxCount: 1 },
   { name: 'archivo_no_militancia', maxCount: 1 },
-  { name: 'curriculum', maxCount: 1 },          // Hoja de vida
-  { name: 'capturaPantalla', maxCount: 1 }  
+  { name: 'archivo_curriculum', maxCount: 1 },          // Hoja de vida
+  { name: 'archivo_certificado_ofimatica', maxCount: 1 }  
 ]), crearPostulante);
 
-
+//router.get('/postulantes', listarPostulantes)
 // Rutas protegidas (requieren autenticación y ser admin)
 router.get('/postulantes', verificarAutenticacion, esAdministrador, listarPostulantes);
 router.get('/postulantes/excel', verificarAutenticacion, esAdministrador, generarExcel);

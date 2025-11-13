@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS postulantes (
   id SERIAL PRIMARY KEY,
-  requisitos JSONB,
   nombre VARCHAR(250),
   apellido_paterno VARCHAR(250),
   apellido_materno VARCHAR(250),
@@ -17,37 +16,23 @@ CREATE TABLE IF NOT EXISTS postulantes (
   email VARCHAR(255),
   telefono INTEGER,
   celular INTEGER,
-  latitud DOUBLE PRECISION,
-  longitud DOUBLE PRECISION,
-  marca_celular VARCHAR(30),
-  modelo_celular VARCHAR(30),
-  tipo_postulacion VARCHAR(100) CHECK (
-    tipo_postulacion IN (
-      'OPERADOR DE TRANSMISION SIREPRE URBANO',
-      'OPERADOR DE TRANSMISION SIREPRE PROVINCIA'
-    )
-  ),
-  id_recinto VARCHAR(12),
-  nombre_recinto VARCHAR(250),
-  municipio_recinto VARCHAR(250),
-  vive_cerca_recinto BOOLEAN,
-  experiencia_general integer,
-  experiencia_especifica integer,
+  cargo_postulacion VARCHAR(100),
+  experiencia_especifica VARCHAR(24),
+  experiencia_general VARCHAR(24),
   -- campos booleanos requisitos
   es_boliviano BOOLEAN,
   registrado_en_padron_electoral BOOLEAN,
   ci_vigente BOOLEAN,
   disponibilidad_tiempo_completo BOOLEAN,
-  celular_con_camara BOOLEAN,
-  android_8_2_o_superior BOOLEAN,
   linea_entel BOOLEAN,
   ninguna_militancia_politica BOOLEAN,
   sin_conflictos_con_la_institucion BOOLEAN,
+  sin_sentencia_ejecutoriada BOOLEAN,
   --rutas a los archivos
   archivo_ci VARCHAR(255),
   archivo_no_militancia VARCHAR(255),
   archivo_hoja_de_vida VARCHAR(255),
-  archivo_screenshot_celular VARCHAR(255),
+  archivo_certificado_ofimatica VARCHAR(255),
   -- Campo de registro automático
   fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -67,3 +52,34 @@ CREATE TABLE IF NOT EXISTS usuarios (
 INSERT INTO usuarios (username, email, password_hash, rol) 
 VALUES ('admin', 'admin@example.com', '$2b$10$5v5ZIVUQw.d2ZrFpD5JQ3Oo7M7jYvJz8Xo6bN3tL9QwW1kK5X5z6O', 'admin')
 ON CONFLICT (username) DO NOTHING;
+
+
+-- actualizacion de la tabla postulantes para el padron biometrico
+--*
+-- ALTER TABLE postulantes
+--   DROP COLUMN IF EXISTS requisitos,
+--   DROP COLUMN IF EXISTS latitud,
+--   DROP COLUMN IF EXISTS longitud,
+--   DROP COLUMN IF EXISTS marca_celular,
+--   DROP COLUMN IF EXISTS modelo_celular,
+--   DROP COLUMN IF EXISTS tipo_postulacion,
+--   DROP COLUMN IF EXISTS id_recinto,
+--   DROP COLUMN IF EXISTS nombre_recinto,
+--   DROP COLUMN IF EXISTS Municipio_recinto,
+--   DROP COLUMN IF EXISTS vive_cerca_recinto,
+--   DROP COLUMN IF EXISTS celular_con_camara,
+--   DROP COLUMN IF EXISTS android_8_2_o_superior,
+--   DROP COLUMN IF EXISTS archivo_screenshot_celular,
+--   DROP COLUMN IF EXISTS experiencia_especifica,
+--   DROP COLUMN IF EXISTS experiencia_general;
+  
+  
+
+--   SELECT * FROM postulantes;
+
+-- ALTER TABLE postulantes
+--   ADD COLUMN IF NOT EXISTS sin_sentencia_ejecutoriada BOOLEAN,
+--   ADD COLUMN IF NOT EXISTS archivo_certificado_ofimatica VARCHAR(255),
+--   ADD COLUMN IF NOT EXISTS cargo_postulacion VARCHAR(100),
+--   ADD COLUMN IF NOT EXISTS experiencia_especifica VARCHAR(24),
+--   ADD COLUMN IF NOT EXISTS experiencia_general VARCHAR(24);

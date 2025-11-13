@@ -49,6 +49,7 @@ app.use('/admin', adminRoutes);
 //DESCOMENTAR PARA AÑADIR A LA LISTA DE RESTRGUIDOS
 const excludedRoutes = [
   //'/postulantes',
+  //'/postulante',
   //'/postulantes/excel',
   //'/estadisticas',
   //'/login',
@@ -57,6 +58,7 @@ const excludedRoutes = [
   '/formulario'  // Para evitar redirección infinita
 ];
 //
+
 app.get('*', (req, res, next) => {
   if (excludedRoutes.includes(req.path)) {
     return next(); // Pasar a la siguiente ruta

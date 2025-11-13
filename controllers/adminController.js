@@ -12,7 +12,7 @@ const listarPostulantes = async (req, res) => {
     let query = `
       SELECT id, nombre, apellido_paterno, apellido_materno, 
              cedula_identidad, complemento, expedicion,
-             fecha_registro, tipo_postulacion
+             fecha_registro, cargo_postulacion
       FROM postulantes
     `;
 
@@ -61,13 +61,10 @@ const generarExcel = async (req, res) => {
         grado_instruccion, carrera,
         ciudad, zona, calle_avenida, numero_domicilio,
         email, telefono, celular,
-        marca_celular, modelo_celular,
-        tipo_postulacion, id_recinto, nombre_recinto, municipio_recinto,
-        vive_cerca_recinto,
+        cargo_postulacion,
         TO_CHAR(fecha_registro, 'DD/MM/YYYY HH24:MI:SS') as fecha_registro,
         es_boliviano, registrado_en_padron_electoral, ci_vigente,
-        disponibilidad_tiempo_completo, celular_con_camara,
-        android_8_2_o_superior, linea_entel,
+        disponibilidad_tiempo_completo,
         ninguna_militancia_politica, sin_conflictos_con_la_institucion
       FROM postulantes
       ORDER BY fecha_registro DESC
@@ -85,9 +82,7 @@ const generarExcel = async (req, res) => {
       { header: 'Grado Instrucción', key: 'grado_instruccion', width: 20 },
       { header: 'Teléfono', key: 'celular', width: 15 },
       { header: 'Email', key: 'email', width: 25 },
-      { header: 'Tipo Postulación', key: 'tipo_postulacion', width: 30 },
-      { header: 'Recinto', key: 'nombre_recinto', width: 30 },
-      { header: 'Municipio', key: 'municipio_recinto', width: 25 },
+      { header: 'Cargo Postulación', key: 'cargo_postulacion', width: 30 },
       { header: 'Fecha Registro', key: 'fecha_registro', width: 20 },
       { header: 'Cumple Requisitos', key: 'cumple_requisitos', width: 15 }
     ];
@@ -103,8 +98,6 @@ const generarExcel = async (req, res) => {
           postulante.registrado_en_padron_electoral &&
           postulante.ci_vigente &&
           postulante.disponibilidad_tiempo_completo &&
-          postulante.celular_con_camara &&
-          postulante.android_8_2_o_superior &&
           postulante.linea_entel &&
           postulante.ninguna_militancia_politica &&
           postulante.sin_conflictos_con_la_institucion
@@ -174,8 +167,6 @@ const obtenerEstadisticas = async (req, res) => {
         COUNT(*) FILTER (WHERE registrado_en_padron_electoral) AS registrado_padron,
         COUNT(*) FILTER (WHERE ci_vigente) AS ci_vigente,
         COUNT(*) FILTER (WHERE disponibilidad_tiempo_completo) AS disponibilidad,
-        COUNT(*) FILTER (WHERE celular_con_camara) AS celular_camara,
-        COUNT(*) FILTER (WHERE android_8_2_o_superior) AS android_superior,
         COUNT(*) FILTER (WHERE linea_entel) AS linea_entel,
         COUNT(*) FILTER (WHERE ninguna_militancia_politica) AS sin_militancia,
         COUNT(*) FILTER (WHERE sin_conflictos_con_la_institucion) AS sin_conflictos,

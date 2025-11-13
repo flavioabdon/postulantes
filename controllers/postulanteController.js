@@ -214,8 +214,8 @@ const crearPostulanteHandler = async (req, res) => {
       archivos: {
         ci: req.files['archivo_ci']?.[0]?.path,
         no_militancia: req.files['archivo_no_militancia']?.[0]?.path,
-        hoja_vida: req.files['curriculum']?.[0]?.path,
-        screenshot: req.files['capturaPantalla']?.[0]?.path
+        hoja_vida: req.files['archivo_curriculum']?.[0]?.path,
+        certificado_ofimatica: req.files['archivo_certificado_ofimatica']?.[0]?.path
       }
     };
     console.log(data);
@@ -249,16 +249,15 @@ const crearPostulanteHandler = async (req, res) => {
     // Procesar todos los requisitos booleanos
     data.es_boliviano = !!requisitos.esBoliviano;
     data.registrado_en_padron_electoral = !!requisitos.registradoPadronElectoral;
-    data.ci_vigente = !!requisitos.cedulaIdentidadVigente;
+    data.ci_vigente = !!requisitos.ciVigente;
     data.disponibilidad_tiempo_completo = !!requisitos.disponibilidadTiempoCompleto;
-    data.celular_con_camara = !!requisitos.celularConCamara;
-    data.android_8_2_o_superior = !!requisitos.android8_2OSuperior;
     data.linea_entel = !!requisitos.lineaEntel;
     data.ninguna_militancia_politica = !!requisitos.ningunaMilitanciaPolitica;
     data.sin_conflictos_con_la_institucion = !!requisitos.sinConflictosInstitucion;
+    data.sin_sentencia_ejecutoriada = !!requisitos.sinSentenciaEjecutoriada;
 
     // Procesar experiencia
-    data.experiencia_general = parseInt(req.body.experiencia_general) || 0;
+    //data.experienciaGeneral = parseInt(req.body.experienciaGeneral) || 0;
 
     // Procesar carrera
     data.carrera = req.body.carrera || 'NO APLICA';

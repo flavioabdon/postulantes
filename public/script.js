@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-   const archivoInputs = ['archivo_ci', 'curriculum'];
+   const archivoInputs = ['archivo_ci', 'archivo_curriculum'];
 
     archivoInputs.forEach(id => {
         const input = document.getElementById(id);
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const archivoInputsImg = ['archivo_no_militancia', 'capturaPantalla']; 
+    const archivoInputsImg = ['archivo_no_militancia', 'archivo_certificado_ofimatica']; 
 
     archivoInputsImg.forEach(id => {
         const input = document.getElementById(id);
