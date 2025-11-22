@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS postulantes (
   cargo_postulacion VARCHAR(100),
   experiencia_especifica VARCHAR(24),
   experiencia_general VARCHAR(24),
+  experiencia_procesos_rural VARCHAR(512),
   -- campos booleanos requisitos
   es_boliviano BOOLEAN,
   registrado_en_padron_electoral BOOLEAN,
@@ -28,6 +29,8 @@ CREATE TABLE IF NOT EXISTS postulantes (
   ninguna_militancia_politica BOOLEAN,
   sin_conflictos_con_la_institucion BOOLEAN,
   sin_sentencia_ejecutoriada BOOLEAN,
+  cuenta_con_celular_android BOOLEAN,
+  cuenta_con_powerbank BOOLEAN,
   --rutas a los archivos
   archivo_ci VARCHAR(255),
   archivo_no_militancia VARCHAR(255),
@@ -83,3 +86,8 @@ ON CONFLICT (username) DO NOTHING;
 --   ADD COLUMN IF NOT EXISTS cargo_postulacion VARCHAR(100),
 --   ADD COLUMN IF NOT EXISTS experiencia_especifica VARCHAR(24),
 --   ADD COLUMN IF NOT EXISTS experiencia_general VARCHAR(24);
+
+-- ALTER TABLE postulantes
+--    ADD COLUMN IF NOT EXISTS cuenta_con_celular_android BOOLEAN,
+--    ADD COLUMN IF NOT EXISTS cuenta_con_powerbank BOOLEAN,
+--    ADD COLUMN IF NOT EXISTS experiencia_procesos_rural VARCHAR(512);

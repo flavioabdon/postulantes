@@ -28,6 +28,7 @@ const crearPostulante = async (data) => {
       celular,
       experiencia_general,
       experiencia_especifica, 
+      experiencia_procesos_rural,
       es_boliviano,
       registrado_en_padron_electoral,
       ci_vigente,
@@ -35,6 +36,8 @@ const crearPostulante = async (data) => {
       linea_entel, 
       ninguna_militancia_politica,
       sin_conflictos_con_la_institucion,
+      cuenta_con_celular_android,
+      cuenta_con_powerbank,
       archivo_ci, 
       archivo_no_militancia,
       archivo_hoja_de_vida,
@@ -45,43 +48,46 @@ const crearPostulante = async (data) => {
       $1, $2, $3, $4, $5, $6, $7, $8, $9, $10,
       $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
       $21, $22, $23, $24, $25, $26, $27, $28, $29, $30,
-      $31
+      $31, $32, $33, $34
     )
     RETURNING id
   `;
   
   const values = [                  
-    data.nombre,                                
-    data.apellidoPaterno || null,               
-    data.apellidoMaterno || null,               
-    data.fechaNacimiento,                       
-    data.cedulaIdentidad,                       
-    data.complemento || null,                   
-    data.expedicion,                            
-    data.gradoInstruccion,                      
-    data.carrera || 'NO APLICA',                
-    data.ciudad,                                
-    data.zona,                                  
-    data.calleAvenida,                          
-    data.numeroDomicilio,                       
-    data.email,                                 
-    data.telefono || null,                      
-    data.celular,                                                                       
-    data.experienciaGeneral || null,     
-    data.experienciaEspecifica || null,        
-    data.es_boliviano || false,                 
-    data.registrado_en_padron_electoral || false,
-    data.ci_vigente || false,                   
-    data.disponibilidad_tiempo_completo || false,      
-    data.linea_entel || false,                
-    data.ninguna_militancia_politica || false,  
-    data.sin_conflictos_con_la_institucion || false,
-    data.archivos.ci,                        
-    data.archivos.no_militancia,                
-    data.archivos.hoja_vida,                    
-    data.sin_sentencia_ejecutoriada || false,
-    data.archivos.certificado_ofimatica || null,
-    data.cargoPostulacion,
+    data.nombre, //1                               
+    data.apellidoPaterno || null, //2               
+    data.apellidoMaterno || null,    //3           
+    data.fechaNacimiento,               ///4        
+    data.cedulaIdentidad,                   //5    
+    data.complemento || null,                  //6 
+    data.expedicion,                            //7
+    data.gradoInstruccion,                      //8
+    data.carrera || 'NO APLICA',                //9
+    data.ciudad,                                //10
+    data.zona,                                  //11
+    data.calleAvenida,                          //12
+    data.numeroDomicilio,                       //13
+    data.email,                                 //14
+    data.telefono || null,                      //15
+    data.celular,                                   //16                                    
+    data.experienciaGeneral || null,     //17
+    data.experienciaEspecifica || null,//18
+    data.experienciaProcesosRural || null, //19       
+    data.es_boliviano || false,                //20 
+    data.registrado_en_padron_electoral || false, //21
+    data.ci_vigente || false,                   //22
+    data.disponibilidad_tiempo_completo || false,   //23   
+    data.linea_entel || false,                //24
+    data.ninguna_militancia_politica || false,   //25
+    data.sin_conflictos_con_la_institucion || false,  //26
+    data.cuenta_con_celular_android || false,  //27
+    data.cuenta_con_powerbank || false,   //28
+    data.archivos.ci,                        //29
+    data.archivos.no_militancia,                //30
+    data.archivos.hoja_vida,                    //31
+    data.sin_sentencia_ejecutoriada || false,    //32
+    data.archivos.certificado_ofimatica || null, //33
+    data.cargoPostulacion,                      //34
   ];
 
   try {

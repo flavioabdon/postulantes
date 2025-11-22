@@ -130,7 +130,7 @@ async function generarPDF(data) {
     fs.unlinkSync(qrPath);
   }
 
-  drawText(`Fecha de registro: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, width - 450, yPosition, {
+  drawText(`Fecha de registro: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, width - 400, yPosition, {
     size: 8,
     color: rgb(0.3, 0.3, 0.3)
   });
@@ -160,20 +160,13 @@ async function generarPDF(data) {
     { spacer: 5 }
   ]);
 
-  drawSection('DISPOSITIVO MÓVIL', [
-    { text: `Marca: ${data.marcaCelular || 'No especificado'}` },
-    { text: `Modelo: ${data.modeloCelular || 'No especificado'}` },
-    { spacer: 5 }
-  ]);
-
-  drawSection('RECINTO ELECTORAL', [
-    { text: `Tipo de Postulación: ${data.tipoPostulacion || 'No especificado'}` },
-    { text: `ID Recinto: ${data.idRecinto || 'No especificado'}` },
-    { text: `Nombre Recinto: ${data.nombreRecinto || 'No especificado'}` },
-    { text: `Municipio: ${data.municipioRecinto || 'No especificado'}` },
-    { text: `Vive cerca del recinto: ${data.viveCercaRecinto ? 'Sí' : 'No'}` },
-    { spacer: 5 }
-  ]);
+  drawSection('INFORMACIÓN SOBRE LA POSTULACIÓN', [
+    { text: `Cargo postulacion: ${data.cargoPostulacion || 'No especificado'}`},
+    { text: `Experiencia General: ${data.experienciaGeneral || 'No especificado'}`},
+    { text: `Experiencia Especifica: ${data.experienciaEspecifica || 'No especificado'}`},
+    { spacer: 5}
+    
+  ])
 
   drawSection('DOCUMENTACIÓN ADJUNTADA', [
     { text: `Archivo CI: ${data.archivos.ci ? 'Presentado' : 'No presentado'}` },
@@ -255,6 +248,8 @@ const crearPostulanteHandler = async (req, res) => {
     data.ninguna_militancia_politica = !!requisitos.ningunaMilitanciaPolitica;
     data.sin_conflictos_con_la_institucion = !!requisitos.sinConflictosInstitucion;
     data.sin_sentencia_ejecutoriada = !!requisitos.sinSentenciaEjecutoriada;
+    data.cuenta_con_celular_android = !!requisitos.cuentaConCelularAndroid;
+    data.cuanta_con_powerbank = !!requisitos.cuentaConPowerbank;
 
     // Procesar experiencia
     //data.experienciaGeneral = parseInt(req.body.experienciaGeneral) || 0;
