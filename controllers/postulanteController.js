@@ -109,7 +109,7 @@ async function generarPDF(data) {
   };
 
   // Encabezado (fuera de recuadro)
-  drawText('POSTULACIÓN SIREPRE', width/2 - 100, yPosition, {
+  drawText('POSTULACIÓN EMPADRONAMIENTO BIOMÉTRICO', width/2 - 100, yPosition, {
     size: 13, // Reducido de 16 a 13
     bold: true,
     color: rgb(0, 0.2, 0.4)
