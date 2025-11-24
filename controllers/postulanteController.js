@@ -201,6 +201,49 @@ async function generarPDF(data) {
   return pdfPath;
 }
 
+// Función para servir el PDF
+const servirPDF = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const pdfPath = path.join(__dirname, '../public/comprobantes', `comprobante_${id}.pdf`);
+    
+    console.log('Buscando PDF en:', pdfPath);
+    
+    // Verificar si el archivo existe
+    if (!fs.existsSync(pdfPath)) {
+      console.log('PDF no encontrado:', pdfPath);
+      return res.status(404).json({ 
+        success: false, 
+        message: 'PDF no encontrado' 
+      });
+    }
+
+    // Configurar headers para PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="comprobante_${id}.pdf"`);
+    res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache de 1 hora
+
+    // Stream el archivo PDF
+    const fileStream = fs.createReadStream(pdfPath);
+    fileStream.pipe(res);
+
+    fileStream.on('error', (error) => {
+      console.error('Error al servir PDF:', error);
+      res.status(500).json({ 
+        success: false, 
+        message: 'Error al servir el PDF' 
+      });
+    });
+
+  } catch (error) {
+    console.error('Error en servirPDF:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error interno del servidor' 
+    });
+  }
+};
+
 const crearPostulanteHandler = async (req, res) => {
   try {
     const data = {
@@ -212,7 +255,8 @@ const crearPostulanteHandler = async (req, res) => {
         certificado_ofimatica: req.files['archivo_certificado_ofimatica']?.[0]?.path
       }
     };
-    console.log(data);
+    console.log('Datos recibidos:', data);
+    
     // Procesamiento CORREGIDO de requisitos
     let requisitos = {};
     if (Array.isArray(data.requisitos)) {
@@ -240,6 +284,9 @@ const crearPostulanteHandler = async (req, res) => {
       // Caso 3: Cuando viene como objeto
       requisitos = data.requisitos || {};
     }
+    
+    console.log('Requisitos procesados:', requisitos);
+    
     // Procesar todos los requisitos booleanos
     data.es_boliviano = !!requisitos.esBoliviano;
     data.registrado_en_padron_electoral = !!requisitos.registradoPadronElectoral;
@@ -253,7 +300,7 @@ const crearPostulanteHandler = async (req, res) => {
     data.cuanta_con_powerbank = !!requisitos.cuentaConPowerbank;
 
     // Procesar experiencia
-    //data.experienciaGeneral = parseInt(req.body.experienciaGeneral) || 0;
+    data.experienciaGeneral = parseInt(req.body.experienciaGeneral) || 0;
 
     // Procesar carrera
     data.carrera = req.body.carrera || 'NO APLICA';
@@ -266,15 +313,10 @@ const crearPostulanteHandler = async (req, res) => {
       success: true,
       message: 'Postulante registrado exitosamente',
       id: nuevoPostulante.id,
-      pdfUrl: `/comprobantes/${pdfFilename}`,
+      pdfUrl: `/api/postulantes/pdf/${data.cedulaIdentidad}`, // ✅ URL corregida
       pdfFilename: pdfFilename,
       nombreCompleto: `${data.nombre} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}`
     });
-
-    // res.status(201).json({
-    //   success: true,
-    //   pdfUrl: `/comprobantes/${pdfFilename}`,
-    // })
 
   } catch (error) {
     console.error('Error en crearPostulanteHandler:', error);
@@ -311,5 +353,6 @@ const verificarExistenciaPostulante = async (req, res) => {
 module.exports = {
   crearPostulante: crearPostulanteHandler,
   verificarExistenciaPostulante,
+  servirPDF, // ✅ Exportar la nueva función
   generarPDF
 };
