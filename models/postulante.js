@@ -87,7 +87,7 @@ const crearPostulante = async (data) => {
     data.archivos.hoja_vida,                    //31
     data.sin_sentencia_ejecutoriada || false,    //32
     data.archivos.certificado_ofimatica || null, //33
-    data.cargoPostulacion,                      //34
+    data.cargoPostulacion,  
   ];
 
   try {

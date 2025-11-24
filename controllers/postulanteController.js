@@ -109,7 +109,7 @@ async function generarPDF(data) {
   };
 
   // Encabezado (fuera de recuadro)
-  drawText('POSTULACIÓN EMPADRONAMIENTO BIOMÉTRICO', width/2 - 100, yPosition, {
+  drawText('POSTULACIÓN EMPADRONAMIENTO BIOMÉTRICO', width/2 - 200, yPosition, {
     size: 13, // Reducido de 16 a 13
     bold: true,
     color: rgb(0, 0.2, 0.4)
@@ -149,6 +149,7 @@ async function generarPDF(data) {
   drawSection('INFORMACIÓN DE CONTACTO', [
     { text: `Email: ${data.email || 'No especificado'}` },
     { text: `Celular: ${data.celular || 'No especificado'}` },
+    { text: `Celular respaldo: ${data.telefono || 'No especificado'}` },
     { spacer: 5 }
   ]);
 
@@ -172,7 +173,7 @@ async function generarPDF(data) {
     { text: `Archivo CI: ${data.archivos.ci ? 'Presentado' : 'No presentado'}` },
     { text: `Archivo No Militancia: ${data.archivos.no_militancia ? 'Presentado' : 'No presentado'}` },
     { text: `Hoja de Vida: ${data.archivos.hoja_vida ? 'Presentado' : 'No presentado'}` },
-    { text: `Captura de Pantalla: ${data.archivos.screenshot ? 'Presentado' : 'No presentado'}` },
+    { text: `Certificado de experiencia en Procesos de Empadronamiento: ${data.archivos.certificado_ofimatica ? 'Presentado' : 'No presentado'}` },
     { spacer: 5 }
   ]);
 
