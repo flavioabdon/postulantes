@@ -2,7 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const { crearPostulante } = require('../controllers/postulanteController');
 const { verificarExistenciaPostulante } = require('../controllers/postulanteController');
-
+const { generarPDF } = require('../controllers/postulanteController');
 const { listarPostulantes, generarExcel, obtenerEstadisticas } = require('../controllers/adminController');
 const { verificarAutenticacion, esAdministrador } = require('../middlewares/auth');
 
@@ -20,6 +20,7 @@ router.post('/', upload.fields([
   { name: 'archivo_curriculum', maxCount: 1 },          // Hoja de vida
   { name: 'archivo_certificado_ofimatica', maxCount: 1 }  
 ]), crearPostulante);
+router.get('/pdf/:id', generarPDF);
 
 //router.get('/postulantes', listarPostulantes)
 // Rutas protegidas (requieren autenticación y ser admin)

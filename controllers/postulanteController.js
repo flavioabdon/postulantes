@@ -305,5 +305,6 @@ const verificarExistenciaPostulante = async (req, res) => {
 
 module.exports = {
   crearPostulante: crearPostulanteHandler,
-  verificarExistenciaPostulante
+  verificarExistenciaPostulante,
+  generarPDF
 };
