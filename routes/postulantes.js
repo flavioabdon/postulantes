@@ -20,7 +20,23 @@ router.post('/', upload.fields([
   { name: 'archivo_curriculum', maxCount: 1 },          // Hoja de vida
   { name: 'archivo_certificado_ofimatica', maxCount: 1 }  
 ]), crearPostulante);
-router.get('/pdf/:id', generarPDF);
+
+const fs = require("fs");
+const path = require("path");
+
+router.get('/comprobantes/:filename', (req, res) => {
+  const filePath = path.join(__filename, "../public/comprobantes", req.params.filename);
+  
+  if (!fs.existsSync(filePath)){
+    return res.status(404).send('archivo no encontrado');
+  }
+
+  res.setHeader("Content-Type", "application/pdf");
+  res.setHeader("Content-Disposition", `attachment; filename="${req.params.filename}"`);
+
+  const fileStream = fs.createReadStream(filePath);
+  fileStream.pipe(res)
+});
 
 //router.get('/postulantes', listarPostulantes)
 // Rutas protegidas (requieren autenticación y ser admin)

@@ -271,6 +271,11 @@ const crearPostulanteHandler = async (req, res) => {
       nombreCompleto: `${data.nombre} ${data.apellidoPaterno || ''} ${data.apellidoMaterno || ''}`
     });
 
+    // res.status(201).json({
+    //   success: true,
+    //   pdfUrl: `/comprobantes/${pdfFilename}`,
+    // })
+
   } catch (error) {
     console.error('Error en crearPostulanteHandler:', error);
     res.status(500).json({ 
